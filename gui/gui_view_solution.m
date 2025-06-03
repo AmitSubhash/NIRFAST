@@ -248,7 +248,7 @@ if fn == 0
     return;
 end
 temp = [pn fn];
-k = findstr(temp,'_');
+k = strfind(temp,'_');
 set(handles.solution,'String',temp(1:max(k)-1));
 
 guidata(hObject, handles);

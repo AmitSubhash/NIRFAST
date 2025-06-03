@@ -19,7 +19,7 @@ if ispref('nirfast','solver')
     % if pardiso is chosen, make sure it's available
     if strcmp(solver,'pardiso')
         env = getenv('LD_LIBRARY_PATH');
-        if isempty(findstr(env,'pardiso'))
+        if ~contains(env,'pardiso')
             pardiso = 0;
         else
             pardiso = 1;
@@ -43,7 +43,7 @@ else
     
     % determine which solver is best
     env = getenv('LD_LIBRARY_PATH');
-    if isempty(findstr(env,'pardiso'))
+    if ~contains(env,'pardiso')
         pardiso = 0;
     else
         pardiso = 1;

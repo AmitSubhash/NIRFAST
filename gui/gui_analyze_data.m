@@ -129,7 +129,7 @@ set(handles.data,'String',contents{get(hObject,'Value')});
 
 % load data
 loc = get(handles.data,'String');
-if isempty(findstr(loc,'/')) && isempty(findstr(loc,'\'))...
+if ~contains(loc,'/') && ~contains(loc,'\')...
         && evalin('base',strcat('exist(''',loc,''',''var'')'))
     handles.datavar = evalin('base',loc);
 elseif exist(loc) == 2
@@ -168,7 +168,7 @@ function data_Callback(hObject, eventdata, handles)
 
 % load data
 loc = get(handles.data,'String');
-if isempty(findstr(loc,'/')) && isempty(findstr(loc,'\'))...
+if ~contains(loc,'/') && ~contains(loc,'\')...
         && evalin('base',strcat('exist(''',loc,''',''var'')'))
     handles.datavar = evalin('base',loc);
 elseif exist(loc) == 2
@@ -291,7 +291,7 @@ set(handles.data,'String',[pn fn]);
 
 % load data
 loc = get(handles.data,'String');
-if isempty(findstr(loc,'/')) && isempty(findstr(loc,'\'))...
+if ~contains(loc,'/') && ~contains(loc,'\')...
         && evalin('base',strcat('exist(''',loc,''',''var'')'))
     handles.datavar = evalin('base',loc);
 elseif exist(loc) == 2
@@ -572,9 +572,9 @@ function tolerance_amplitude_text_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of tolerance_amplitude_text as text
 %        str2double(get(hObject,'String')) returns contents of tolerance_amplitude_text as a double
-set(handles.tolerance_amplitude,'Value',0.01*str2num(get(hObject,'String')));
+set(handles.tolerance_amplitude,'Value',0.01*str2double(get(hObject,'String')));
 if ~isempty(get(handles.wavelength,'String'))
-    handles.tolampwv(get(handles.wavelength,'Value')) = 0.01*str2num(get(hObject,'String'));
+    handles.tolampwv(get(handles.wavelength,'Value')) = 0.01*str2double(get(hObject,'String'));
 end
 
 handles = display_plots(handles);
@@ -603,9 +603,9 @@ function tolerance_phase_text_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of tolerance_phase_text as text
 %        str2double(get(hObject,'String')) returns contents of tolerance_phase_text as a double
-set(handles.tolerance_phase,'Value',0.01*str2num(get(hObject,'String')));
+set(handles.tolerance_phase,'Value',0.01*str2double(get(hObject,'String')));
 if ~isempty(get(handles.wavelength,'String'))
-    handles.tolphwv(get(handles.wavelength,'Value')) = 0.01*str2num(get(hObject,'String'));
+    handles.tolphwv(get(handles.wavelength,'Value')) = 0.01*str2double(get(hObject,'String'));
 end
 
 handles = display_plots(handles);
@@ -639,7 +639,7 @@ set(handles.mesh,'String',contents{get(hObject,'Value')});
 
 % load the mesh
 loc = get(handles.mesh,'String');
-if isempty(findstr(loc,'/')) && isempty(findstr(loc,'\'))...
+if ~contains(loc,'/') && ~contains(loc,'\')...
         && evalin('base',strcat('exist(''',loc,''',''var'')'))
     handles.meshvar = evalin('base',loc);
 elseif exist([loc '.node']) == 2
@@ -719,7 +719,7 @@ function mesh_Callback(hObject, eventdata, handles)
 
 % load the mesh
 loc = get(handles.mesh,'String');
-if isempty(findstr(loc,'/')) && isempty(findstr(loc,'\'))...
+if ~contains(loc,'/') && ~contains(loc,'\')...
         && evalin('base',strcat('exist(''',loc,''',''var'')'))
     handles.meshvar = evalin('base',loc);
 elseif exist([loc '.node']) == 2
@@ -801,7 +801,7 @@ set(handles.mesh,'String',temp(1:end-5));
 
 % load the mesh
 loc = get(handles.mesh,'String');
-if isempty(findstr(loc,'/')) && isempty(findstr(loc,'\'))...
+if ~contains(loc,'/') && ~contains(loc,'\')...
         && evalin('base',strcat('exist(''',loc,''',''var'')'))
     handles.meshvar = evalin('base',loc);
 elseif exist([loc '.node']) == 2
@@ -940,9 +940,9 @@ function lower_text_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of lower_text as text
 %        str2double(get(hObject,'String')) returns contents of lower_text as a double
-set(handles.lower,'Value',str2num(get(hObject,'String')));
+set(handles.lower,'Value',str2double(get(hObject,'String')));
 if ~isempty(get(handles.wavelength,'String'))
-    handles.lowerwv(get(handles.wavelength,'Value')) = str2num(get(hObject,'String'));
+    handles.lowerwv(get(handles.wavelength,'Value')) = str2double(get(hObject,'String'));
 end
 
 handles = display_plots(handles);
@@ -1001,9 +1001,9 @@ function upper_text_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of upper_text as text
 %        str2double(get(hObject,'String')) returns contents of upper_text as a double
-set(handles.upper,'Value',str2num(get(hObject,'String')));
+set(handles.upper,'Value',str2double(get(hObject,'String')));
 if ~isempty(get(handles.wavelength,'String'))
-    handles.upperwv(get(handles.wavelength,'Value')) = str2num(get(hObject,'String'));
+    handles.upperwv(get(handles.wavelength,'Value')) = str2double(get(hObject,'String'));
 end
 
 handles = display_plots(handles);

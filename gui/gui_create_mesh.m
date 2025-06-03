@@ -176,7 +176,7 @@ shape = shapeobj{get(handles.shape,'Value')};
 
    
 if strcmp(shape,'Circle') && ~isempty(get(handles.radius,'String'))
-    smallest = str2num(get(handles.radius,'String'));
+    smallest = str2double(get(handles.radius,'String'));
     if isempty(get(handles.distance,'String'))
         set(handles.distance,'String',num2str(smallest*0.025));
     end
@@ -184,8 +184,8 @@ end
 
 if strcmp(shape,'Rectangle') && ~isempty(get(handles.width,'String')) ...
         && ~isempty(get(handles.height,'String'))
-    smallest = min([str2num(get(handles.width,'String')), ...
-                    str2num(get(handles.height,'String'))]);
+    smallest = min([str2double(get(handles.width,'String')), ...
+                    str2double(get(handles.height,'String'))]);
     if isempty(get(handles.distance,'String'))
         set(handles.distance,'String',num2str(smallest*0.025));
     end
@@ -193,8 +193,8 @@ end
 
 if strcmp(shape,'Cylinder') && ~isempty(get(handles.radius,'String')) ...
         && ~isempty(get(handles.height,'String'))
-    smallest = min([str2num(get(handles.radius,'String')), ...
-                    str2num(get(handles.height,'String'))]);
+    smallest = min([str2double(get(handles.radius,'String')), ...
+                    str2double(get(handles.height,'String'))]);
     if isempty(get(handles.distance,'String'))
         set(handles.distance,'String',num2str(smallest*0.035));
     end
@@ -203,9 +203,9 @@ end
 if strcmp(shape,'Slab') && ~isempty(get(handles.width,'String')) ...
         && ~isempty(get(handles.height,'String')) ...
         && ~isempty(get(handles.depth,'String'))
-    smallest = min([str2num(get(handles.width,'String')), ...
-                    str2num(get(handles.height,'String')), ...
-                    str2num(get(handles.depth,'String'))]);
+    smallest = min([str2double(get(handles.width,'String')), ...
+                    str2double(get(handles.height,'String')), ...
+                    str2double(get(handles.depth,'String'))]);
     if isempty(get(handles.distance,'String'))
         set(handles.distance,'String',num2str(smallest*0.035));
     end

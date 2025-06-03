@@ -505,7 +505,7 @@ if get(handles.row_type,'Value')==1
     sources = get(handles.sources,'String');
     data1 = textscan(p1,'%.54f');
     data2 = textscan(p2,'%.54f');
-    numpoints = str2num(get(handles.row_number,'String'));
+    numpoints = str2double(get(handles.row_number,'String'));
     point1 = data1{1};
     point2 = data2{1};
     vec = (point2 - point1)/(numpoints-1);
@@ -528,7 +528,7 @@ else
     detectors = get(handles.detectors,'String');
     data1 = textscan(p1,'%.54f');
     data2 = textscan(p2,'%.54f');
-    numpoints = str2num(get(handles.row_number,'String'));
+    numpoints = str2double(get(handles.row_number,'String'));
     point1 = data1{1};
     point2 = data2{1};
     vec = (point2 - point1)/(numpoints-1);
