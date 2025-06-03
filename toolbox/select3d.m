@@ -49,12 +49,16 @@ obj_type = get(currobj,'Type');
 
 switch obj_type
     case 'surface'
-        fv = surf2patch(currobj);
+        % Use triangulation to simplify intersection tests
+        fv = surf2patch(currobj,'triangles');
         vertices = fv.vertices;
         faces = fv.faces;
     case 'patch'
         vertices = get(currobj,'Vertices');
         faces = get(currobj,'Faces');
+        if size(faces,2) > 3 || any(isnan(faces(:)))
+            faces = local_triangulate(faces);
+        end
     case 'line'
         xdata = get(currobj,'XData');
         ydata = get(currobj,'YData');
@@ -139,7 +143,7 @@ f = 1.0 / a;
 s = orig - tri(1,:);
 u = f * dot(s, h);
 if u < 0.0 || u > 1.0
-    hit = false; t = Inf; return;
+    hit = false; t = Inf; v = 0; return;
 end
 q = cross(s, edge1);
 v = f * dot(dir, q);
@@ -151,5 +155,20 @@ if t > epsilon
     hit = true;
 else
     hit = false; t = Inf;
+end
+end
+
+function faces_tri = local_triangulate(faces)
+%LOCAL_TRIANGULATE Convert polygon faces to triangles
+faces_tri = [];
+for i = 1:size(faces,1)
+    idx = faces(i,:);
+    idx = idx(~isnan(idx));
+    if numel(idx) < 3
+        continue;
+    end
+    for k = 2:(numel(idx)-1)
+        faces_tri(end+1,:) = [idx(1) idx(k) idx(k+1)]; %#ok<AGROW>
+    end
 end
 end
