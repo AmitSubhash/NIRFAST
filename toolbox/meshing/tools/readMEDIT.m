@@ -9,7 +9,7 @@ while true
         break;
     end
 end
-nn = str2num(fgetl(fid));
+nn = str2double(fgetl(fid));
 
 data = textscan(fid,'%f %f %f%*[^\n]',nn);
 if length(data{1}) ~= nn
@@ -33,7 +33,7 @@ while true
 end
 
 if tri==1
-    nt = str2num(fgetl(fid));
+    nt = str2double(fgetl(fid));
     tris_ = textscan(fid,'%d %d %d %d%*[^\n]',nt);
     if length(tris_{1}) ~= nt
         warning('Expecting %d faces, but got %d instead!\n', nt, length(tris_{1}));
@@ -49,7 +49,7 @@ if tri==1
 end
 
 if tet==1
-    ne = str2num(fgetl(fid));
+    ne = str2double(fgetl(fid));
     data = textscan(fid,'%d %d %d %d %d%*[^\n]',ne);
     if length(data{1}) ~= ne
         warning('Expecting %d elements, but got %d instead!\n', ne, length(data));

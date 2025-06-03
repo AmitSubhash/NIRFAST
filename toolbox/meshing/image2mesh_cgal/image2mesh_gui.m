@@ -642,9 +642,9 @@ else
     
     % find singleton dimension for use in reordering fiducial coords
     dim = [0 0 0];
-    dim(1) = str2num(get(handles.nrows,'String'));
-    dim(2) = str2num(get(handles.ncols,'String'));
-    dim(3) = str2num(get(handles.nslices,'String'));
+    dim(1) = str2double(get(handles.nrows,'String'));
+    dim(2) = str2double(get(handles.ncols,'String'));
+    dim(3) = str2double(get(handles.nslices,'String'));
     sing_dim = find(dim==1);
     
     % reorder coords based on singleton dimension
@@ -702,7 +702,7 @@ else
     %content{end+1} = strcat('mask2mesh_2D(flipdim(rot90(mask.'',2),2),[',pix_dim,'],',...
     content{end+1} = strcat('mask2mesh_2D(rot90(mask,1),[',pix_dim,'],',...
         get(handles.cell_size,'String'),...
-        ',',num2str((str2num(get(handles.cell_size,'String'))^2)/2),...
+        ',',num2str((str2double(get(handles.cell_size,'String'))^2)/2),...
         ',''',[savefn_ '_nirfast_mesh'],...
         ''',''',handles.meshtype,''',[',num2str(offset),']);');
     if ~batch

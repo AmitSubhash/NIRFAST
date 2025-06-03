@@ -141,7 +141,7 @@ if (fid > 0)
     error('[LoadInr] Invalid header XDIM (%s).',name);
   end
   pos_=find(0+header(pos:end)==10);
-  h.xdim=str2num(header(pos+5:pos_(1)-2+pos));
+  h.xdim=str2double(header(pos+5:pos_(1)-2+pos));
   if isempty(h.xdim)
     error('[LoadInr] Invalid XDIM (%s).',name);
   end
@@ -152,7 +152,7 @@ if (fid > 0)
     error('[LoadInr] Invalid header YDIM (%s).',name);
   end
   pos_=find(0+header(pos:end)==10);
-  h.ydim=str2num(header(pos+5:pos_(1)-2+pos));
+  h.ydim=str2double(header(pos+5:pos_(1)-2+pos));
   if isempty(h.ydim)
     error('[LoadInr] Invalid YDIM (%s).',name);
   end 
@@ -163,7 +163,7 @@ if (fid > 0)
     error('[LoadInr] Invalid header ZDIM (%s).',name);
   end
   pos_=find(0+header(pos:end)==10);
-  h.zdim=str2num(header(pos+5:pos_(1)-2+pos));
+  h.zdim=str2double(header(pos+5:pos_(1)-2+pos));
   if isempty(h.zdim)
     error('[LoadInr] Invalid ZDIM (%s).',name);
   end 
@@ -174,7 +174,7 @@ if (fid > 0)
     error('[LoadInr] Invalid header VDIM (%s).',name);
   end
   pos_=find(0+header(pos:end)==10);
-  h.vdim=str2num(header(pos+5:pos_(1)-2+pos));
+  h.vdim=str2double(header(pos+5:pos_(1)-2+pos));
   if isempty(h.vdim)
     error('[LoadInr] Invalid VDIM (%s).',name);
   end
@@ -259,7 +259,7 @@ if (fid > 0)
   end
   if(~isempty(pos))
     pos_=find(0+header(pos:end)==10);
-    h.vx=str2num(header(pos+3:pos_(1)-2+pos));
+    h.vx=str2double(header(pos+3:pos_(1)-2+pos));
     if isempty(h.vx)
       error('[LoadInr] Invalid VX (%s).',name);
     end 
@@ -271,25 +271,25 @@ if (fid > 0)
   end
   if(~isempty(pos))
     pos_=find(0+header(pos:end)==10);
-    h.vy=str2num(header(pos+3:pos_(1)-2+pos));
+    h.vy=str2double(header(pos+3:pos_(1)-2+pos));
     if isempty(h.vy)
       error('[LoadInr] Invalid VY (%s).',name);
     end 
   end
   % z pixelsize
-  pos=findstr(header,'VZ=');
+  pos=strfind(header,'VZ=');
   if(length(pos)>1)
     error(sprintf('[LoadInr] Invalid header VZ (%s).',name));
   end
   if(~isempty(pos))
     pos_=find(0+header(pos:end)==10);
-    h.vz=str2num(header(pos+3:pos_(1)-2+pos));
+    h.vz=str2double(header(pos+3:pos_(1)-2+pos));
     if isempty(h.vz)
       error(sprintf('[LoadInr] Invalid VZ (%s).',name));
     end 
   end
   % scale
-  pos=findstr(header,'SCALE=');
+  pos=strfind(header,'SCALE=');
   if(length(pos)>1)
     error(sprintf('[LoadInr] Invalid header SCALE (%s).',name));
   end
@@ -303,7 +303,7 @@ if (fid > 0)
   
   % find commentlines
   com=[char(10) '#'];
-  pos=findstr(header,com);
+  pos=strfind(header,com);
   % store comments in struct not yet implemented
   
   

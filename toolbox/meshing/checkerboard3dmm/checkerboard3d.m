@@ -108,7 +108,7 @@ if silentflag==0
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     % We should add an option that user can choose an Size function:
     % ds=GetEdgeSizeAtXY(p(t(i,j),:),density);
-    ds = str2num(answer{1});
+    ds = str2double(answer{1});
     % ds=2;
 else
     if isfield(myargs,'edgesize') && ~isempty(myargs.edgesize)

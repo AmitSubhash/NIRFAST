@@ -13,9 +13,9 @@ function varname = mygenvarname(pathloc)
 % varname is the resulting variable name
 
 
-k1 = findstr(pathloc,'/');
-k2 = findstr(pathloc,'\');
-p = findstr(pathloc,'.');
+k1 = strfind(pathloc,'/');
+k2 = strfind(pathloc,'\');
+p = strfind(pathloc,'.');
 if length(p)>1
     pos = p(end);
 else

@@ -19,7 +19,7 @@ if ~isempty(idx) && idx
     foo = dir([fullfile(path,fnprefix) '*' ext]);
     foo = foo(1).name;
     idx = regexpi(foo,['[0-9]+' ext '\>']);
-    num_flag = str2num(foo(idx:end-4));
+    num_flag = str2double(foo(idx:end-4));
 else
     num_flag=-1;
 end

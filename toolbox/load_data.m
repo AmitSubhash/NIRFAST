@@ -107,9 +107,9 @@ if ischar(fn) ~= 0
         S = char(text);
         wloc = strfind(S,'w');
         for i=1:1:numel(wloc)-1
-            data.wv(i) = str2num(strtrim(S(wloc(i)+1:wloc(i+1)-1)));
+            data.wv(i) = str2double(strtrim(S(wloc(i)+1:wloc(i+1)-1)));
         end
-        data.wv(end+1) = str2num(strtrim(S(wloc(end)+1:end)));
+        data.wv(end+1) = str2double(strtrim(S(wloc(end)+1:end)));
         
         % finish writing link
         data.link = [data.link datatemp(:,1:3:end)];

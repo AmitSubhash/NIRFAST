@@ -10,7 +10,7 @@ if isempty(strfind(blah,'OFF'))
 end
 
 junk = fgetl(fid);
-blah = str2num(junk);
+blah = sscanf(junk, '%f')';
 nnodes = blah(1);
 nfaces = blah(2);
 

@@ -418,8 +418,8 @@ if get(handles.view_solution,'Value')
             evalin('base',content{end});
         end
     end
-    src1 = str2num(get(handles.source1,'String'));
-    src2 = str2num(get(handles.source2,'String'));
+    src1 = str2double(get(handles.source1,'String'));
+    src2 = str2double(get(handles.source2,'String'));
     for i=src1:1:src2
         content{end+1} = strcat('plotimage(mesh',...
             ',log(',varname,'.phi(:,',num2str(i),'))); pause(0.2);');

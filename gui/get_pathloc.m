@@ -7,7 +7,7 @@ function pathloc = get_pathloc(loc)
 % loc is the location given
 % pathloc is the resulting location (in quotes if a path)
 
-if isempty(findstr(loc,'/')) && isempty(findstr(loc,'\')) && isempty(findstr(loc,'.'))
+if ~contains(loc,'/') && ~contains(loc,'\') && ~contains(loc,'.')
     pathloc = loc;
 else
     pathloc = strcat('''',loc,'''');

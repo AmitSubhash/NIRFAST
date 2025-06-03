@@ -24,28 +24,28 @@ end
 
 nx=regexp(s,'XDIM\s*=\s*([0-9]+)','tokens');
 if(~isempty(nx)) 
-   nx=str2num(nx{1}{1});
+   nx=str2double(nx{1}{1});
 else
    error('no XDIM found');
 end
 
 ny=regexp(s,'YDIM\s*=\s*([0-9]+)','tokens');
 if(~isempty(ny)) 
-   ny=str2num(ny{1}{1});
+   ny=str2double(ny{1}{1});
 else
    error('no YDIM found');
 end
 
 nz=regexp(s,'ZDIM\s*=\s*([0-9]+)','tokens');
 if(~isempty(nz)) 
-   nz=str2num(nz{1}{1});
+   nz=str2double(nz{1}{1});
 else
    error('no ZDIM found');
 end
 
 nv=regexp(s,'VDIM\s*=\s*([0-9]+)','tokens');
 if(~isempty(nv))
-   nv=str2num(nv{1}{1});
+   nv=str2double(nv{1}{1});
 else
    nv=1;
 end
@@ -59,7 +59,7 @@ end
 
 pixel=regexp(s,'PIXSIZE=([0-9]+)','tokens');
 if(~isempty(pixel))
-   pixel=str2num(pixel{1}{1});
+   pixel=str2double(pixel{1}{1});
 else
    error('no PIXSIZE found');
 end
