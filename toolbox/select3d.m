@@ -204,178 +204,90 @@ end
 %     line('parent',ax1,'xdata',xcp(1,2),'ydata',xcp(2,2),'zdata',0,'marker','o','markerfacecolor','r','erasemode','xor');
 % end
 
-% Transform vertices from data space to pixel space
-xvert = local_Data2PixelTransform(ax,vert)';
-xcp = local_Data2PixelTransform(ax,cp')';
-
-% Translate vertices so that the selection point is at the origin.
-xvert(1,:) = xvert(1,:) - xcp(1,2);
-xvert(2,:) = xvert(2,:) - xcp(2,2);
+% Determine the selection ray
+cp1 = cp(:,1);      % point on near plane
+cp2 = cp(:,2);      % point on far plane
+ray_dir = cp2 - cp1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% simple algorithm (almost naive algorithm!) for line objects %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Alternative algorithm that does not rely on hidden properties %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if isline
-
-    % Ignoring line width and marker attributes, find closest 
-    % vertex in 2-D view space.
-    d = xvert(1,:).*xvert(1,:) + xvert(2,:).*xvert(2,:);
-    [val i] = min(d);
-    i = i(1); % enforce only one output
-    
-    % Assign output
-    vout = [ xdata(i) ydata(i) zdata(i)];
+    % Find closest vertex to the selection ray in 3-D
+    ray_dir = ray_dir./norm(ray_dir);
+    dif = vert - cp1;
+    t = dif*ray_dir';
+    proj = cp1 + t.*ray_dir;
+    d = sqrt(sum((vert-proj).^2,2));
+    [~,i] = min(d);
+    vout = vert(i,:);
     viout = i;
-    
-    return % Bail out early
-end
-   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Perform 2-D crossing test (Jordan Curve Theorem) %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Find all vertices that have y components less than zero
-vert_with_negative_y = zeros(size(faces));
-face_y_vert = xvert(2,faces);
-ind_vert_with_negative_y = find(face_y_vert<0); 
-vert_with_negative_y(ind_vert_with_negative_y) = logical(1);
-
-% Find all the line segments that span the x axis
-is_line_segment_spanning_x = abs(diff([vert_with_negative_y, vert_with_negative_y(:,1)],1,2));
-
-% Find all the faces that have line segments that span the x axis
-ind_is_face_spanning_x = find(any(is_line_segment_spanning_x,2));
-
-% Ignore data that doesn't span the x axis
-candidate_faces = faces(ind_is_face_spanning_x,:);
-vert_with_negative_y = vert_with_negative_y(ind_is_face_spanning_x,:);
-is_line_segment_spanning_x = is_line_segment_spanning_x(ind_is_face_spanning_x,:);
-
-% Create line segment arrays
-pt1 = candidate_faces;
-pt2 = [candidate_faces(:,2:end), candidate_faces(:,1)];
-
-% Point 1
-x1 = reshape(xvert(1,pt1),size(pt1));
-y1 = reshape(xvert(2,pt1),size(pt1));
-
-% Point 2
-x2 = reshape(xvert(1,pt2),size(pt2));
-y2 = reshape(xvert(2,pt2),size(pt2));
-
-% Cross product of vector to origin with line segment
-cross_product_test = -x1.*(y2-y1) > -y1.*(x2-x1);
-
-% Find all line segments that cross the positive x axis
-crossing_test = (cross_product_test==vert_with_negative_y) & is_line_segment_spanning_x;
-
-% If the number of line segments is odd, then we intersected the polygon
-s = sum(crossing_test,2);
-s = mod(s,2);
-ind_intersection_test = find(s~=0);
-
-% Bail out early if no faces were hit
-if isempty(ind_intersection_test)
-   return;    
+    return
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Plane/ray intersection test %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Perform plane/ray intersection with the faces that passed 
-% the polygon intersection tests. Grab the only the first 
-% three vertices since that is all we need to define a plane).
-% assuming planar polygons.
-candidate_faces = candidate_faces(ind_intersection_test,1:3);
-candidate_faces = reshape(candidate_faces',1,prod(size(candidate_faces)));
-vert = vert';
-candidate_facev = vert(:,candidate_faces);
-candidate_facev = reshape(candidate_facev,3,3,length(ind_intersection_test));
+% Initialize intersection search
+best_t = inf;
+faceiout = [];
+viout = [];
+vout = [];
+pout = [];
 
-% Get three contiguous vertices along polygon 
-v1 = squeeze(candidate_facev(:,1,:));
-v2 = squeeze(candidate_facev(:,2,:));
-v3 = squeeze(candidate_facev(:,3,:));
+ray_dir = ray_dir./norm(ray_dir);
 
-% Get normal to face plane
-vec1 = [v2-v1];
-vec2 = [v3-v2];
-crs = cross(vec1,vec2);
-mag = sqrt(sum(crs.*crs));
-nplane(1,:) = crs(1,:)./mag;
-nplane(2,:) = crs(2,:)./mag;
-nplane(3,:) = crs(3,:)./mag;
-
-% Compute intersection between plane and ray
-cp1 = cp(:,1);  
-cp2 = cp(:,2);  
-d = cp2-cp1;
-dp = dot(-nplane,v1);
-
-%A = dot(nplane,d);
-A(1,:) = nplane(1,:).*d(1);
-A(2,:) = nplane(2,:).*d(2);
-A(3,:) = nplane(3,:).*d(3);
-A = sum(A,1);
-
-%B = dot(nplane,pt1) 
-B(1,:) = nplane(1,:).*cp1(1);
-B(2,:) = nplane(2,:).*cp1(2);
-B(3,:) = nplane(3,:).*cp1(3);
-B = sum(B,1);
-
-% Distance to intersection point
-t = (-dp-B)./A;
-
-% Find "best" distance (smallest)
-[tbest ind_best] = min(t);
-
-% Determine intersection point
-pout = cp1 + tbest .* d;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Assign additional output variables %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargout>1
-    
-    % Get face index and vertices
-    faceiout = ind_is_face_spanning_x(ind_intersection_test(ind_best));
-    facevout = vert(:,faces(faceiout,:));
-    
-    % Determine index of closest face vertex intersected 
-    facexv = xvert(:,faces(faceiout,:));
-    dist = sqrt(facexv(1,:).*facexv(1,:) +  facexv(2,:).*facexv(2,:));
-    min_dist = min(dist);
-    min_index = find(dist==min_dist);
-    
-    % Get closest vertex index and vertex
-    viout = faces(faceiout,min_index);
-    vout = vert(:,viout);
+for fi = 1:size(faces,1)
+    f = faces(fi,~isnan(faces(fi,:)));
+    if numel(f) < 3
+        continue
+    end
+    tris = [f(1) f(2) f(3)];
+    [hit, tval] = local_rayTri(cp1, ray_dir, vert(tris,:));
+    if ~hit && numel(f)==4
+        tris = [f(1) f(3) f(4)];
+        [hit, tval] = local_rayTri(cp1, ray_dir, vert(tris,:));
+    end
+    if hit && tval < best_t && tval > 0
+        best_t = tval;
+        faceiout = fi;
+        pout = cp1 + ray_dir.*tval;
+        facevout = vert(f,:);
+        [~,idx] = min(sum((facevout - pout).^2,2));
+        viout = f(idx);
+        vout = vert(viout,:);
+    end
 end
 
-%--------------------------------------------------------%
-function [p] = local_Data2PixelTransform(ax,vert)
-% Transform vertices from data space to pixel space.
+if isempty(pout)
+    return
+end
+end
 
-% Get needed transforms
-xform = get(ax,'x_RenderTransform');
-offset = get(ax,'x_RenderOffset');
-scale = get(ax,'x_RenderScale');
+function [hit,t] = local_rayTri(orig,dir,tri)
+% Ray/triangle intersection using Moller-Trumbore algorithm
+eps_val = 1e-9;
+v1 = tri(1,:); v2 = tri(2,:); v3 = tri(3,:);
+edge1 = v2 - v1;
+edge2 = v3 - v1;
+h = cross(dir, edge2);
+a = dot(edge1,h);
+if abs(a) < eps_val
+    hit = false; t = Inf; return
+end
+f = 1.0/a;
+s = orig - v1;
+u = f*dot(s,h);
+if u < 0 || u > 1
+    hit = false; t = Inf; return
+end
+q = cross(s, edge1);
+v = f*dot(dir,q);
+if v < 0 || (u + v) > 1
+    hit = false; t = Inf; return
+end
+t = f*dot(edge2,q);
+if t <= eps_val
+    hit = false; t = Inf; return
+end
+hit = true;
+end
 
-% Equivalent: nvert = vert/scale - offset;
-nvert(:,1) = vert(:,1)./scale(1) - offset(1);
-nvert(:,2) = vert(:,2)./scale(2) - offset(2);
-nvert(:,3) = vert(:,3)./scale(3) - offset(3);
-
-% Equivalent xvert = xform*xvert;
-w = xform(4,1) * nvert(:,1) + xform(4,2) * nvert(:,2) + xform(4,3) * nvert(:,3) + xform(4,4);
-xvert(:,1) = xform(1,1) * nvert(:,1) + xform(1,2) * nvert(:,2) + xform(1,3) * nvert(:,3) + xform(1,4);
-xvert(:,2) = xform(2,1) * nvert(:,1) + xform(2,2) * nvert(:,2) + xform(2,3) * nvert(:,3) + xform(2,4);
-
-% w may be 0 for perspective plots 
-ind = find(w==0);
-w(ind) = 1; % avoid divide by zero warning
-xvert(ind,:) = 0; % set pixel to 0
-
-p(:,1) = xvert(:,1) ./ w;
-p(:,2) = xvert(:,2) ./ w;
